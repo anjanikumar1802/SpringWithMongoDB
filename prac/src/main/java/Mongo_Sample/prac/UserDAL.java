@@ -14,5 +14,9 @@ public interface UserDAL {
 	String getUserSetting(String userId, String key);
 
 	String addUserSetting(String userId, String key, String value);
+	
+	User updateUser(User user, String userId);
+	
+	String deleteUser(User user);
 }
 

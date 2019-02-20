@@ -55,5 +55,28 @@ public class UserDALImpl implements UserDAL {
 			return "User not found.";
 		}
 	}
+	
+	public User updateUser(User user, String userId) {
+		User userDTO = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(userId)), User.class);
+		if(userDTO != null) {
+			if(user.getCreationDate() != null) {
+				userDTO.setCreationDate(user.getCreationDate());
+			} else if (user.getName() != null) {
+				userDTO.setName(user.getName());
+			} else if(user.getUserSettings() != null) {
+				userDTO.setUserSettings(user.getUserSettings());
+			}
+		} else {
+			System.out.println("-------------= There is nothing to update =-----------------");
+		}
+		
+		mongoTemplate.save(user);
+		return user;
+	}
+	
+	public String deleteUser(User user) {
+		mongoTemplate.remove(user);
+		return "Successfully deleted";
+	}
 }
 
