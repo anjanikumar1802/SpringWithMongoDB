@@ -75,9 +75,9 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.PUT)
-	public User updateUser(@RequestBody User user) {
-		return userDAL.updateUser(user, user.getUserId());
+	@RequestMapping(value = "/{userId}", method = RequestMethod.PUT)
+	public User updateUser(@PathVariable String userId, @RequestBody User user) {
+		return userDAL.updateUser(user,userId);
 	}
 
 	@RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)

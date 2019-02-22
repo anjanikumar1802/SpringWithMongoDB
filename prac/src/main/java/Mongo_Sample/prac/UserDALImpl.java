@@ -1,4 +1,5 @@
 package Mongo_Sample.prac;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,7 +25,6 @@ public class UserDALImpl implements UserDAL {
 
 	public User addNewUser(User user) {
 		mongoTemplate.save(user);
-		// Now, user object will contain the ID as well
 		return user;
 	}
 
@@ -38,7 +38,8 @@ public class UserDALImpl implements UserDAL {
 	public String getUserSetting(String userId, String key) {
 		Query query = new Query();
 		query.fields().include("userSettings");
-		query.addCriteria(Criteria.where("userId").is(userId).andOperator(Criteria.where("userSettings." + key).exists(true)));
+		query.addCriteria(
+				Criteria.where("userId").is(userId).andOperator(Criteria.where("userSettings." + key).exists(true)));
 		User user = mongoTemplate.findOne(query, User.class);
 		return user != null ? user.getUserSettings().get(key) : "Not found.";
 	}
@@ -55,28 +56,41 @@ public class UserDALImpl implements UserDAL {
 			return "User not found.";
 		}
 	}
-	
+
 	public User updateUser(User user, String userId) {
+//		User userDTO = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(userId)), User.class);
+//		if (userDTO != null) {
+//			if (user.getCreationDate() != null) {
+//				userDTO.setCreationDate(user.getCreationDate());
+//			} else if (user.getName() != null) {
+//				userDTO.setName(user.getName());
+//			} else if (user.getUserSettings() != null) {
+//				userDTO.setUserSettings(user.getUserSettings());
+//			}
+//		} else {
+//			System.out.println("-------------= There is nothing to update =-----------------");
+//		}
+//
+//		userDTO.setUserId(userId);
+//		mongoTemplate.save(userDTO);
+//		return userDTO;
+//		
+
 		User userDTO = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(userId)), User.class);
-		if(userDTO != null) {
-			if(user.getCreationDate() != null) {
-				userDTO.setCreationDate(user.getCreationDate());
-			} else if (user.getName() != null) {
-				userDTO.setName(user.getName());
-			} else if(user.getUserSettings() != null) {
-				userDTO.setUserSettings(user.getUserSettings());
-			}
-		} else {
-			System.out.println("-------------= There is nothing to update =-----------------");
+		if (null != userDTO) {
+			userDTO.setName(user.getName());
+			userDTO.setCreationDate(user.getCreationDate());
+			userDTO.setUserSettings(user.getUserSettings());
+			userDTO.setUserId(userId);
 		}
-		
-		mongoTemplate.save(user);
-		return user;
+		mongoTemplate.save(userDTO);
+
+		return userDTO;
+
 	}
-	
+
 	public String deleteUser(User user) {
 		mongoTemplate.remove(user);
 		return "Successfully deleted";
 	}
 }
-
